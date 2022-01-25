@@ -4,9 +4,8 @@ import androidx.lifecycle.LiveData
 import com.example.mydictionary.model.data.AppState
 import com.example.mydictionary.viewmodel.BaseViewModel
 import io.reactivex.observers.DisposableObserver
-import javax.inject.Inject
 
-class MainViewModel @Inject constructor(private val interactor: MainInteractor) : BaseViewModel<AppState>() {
+class MainViewModel (private val interactor: MainInteractor) : BaseViewModel<AppState>() {
     /**В этой переменной хранится последнее состояние Activity*/
     private var appState: AppState? = null
 

@@ -1,52 +1,32 @@
 package com.example.mydictionary.view.main
 
 import android.os.Bundle
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mydictionary.*
-import com.example.mydictionary.application.MyDictionaryApp
 import com.example.mydictionary.databinding.ActivityMainBinding
 import com.example.mydictionary.model.data.AppState
 import com.example.mydictionary.model.data.DataModel
 import com.example.mydictionary.view.base.BaseActivity
 import com.example.mydictionary.view.main.adapter.MainAdapter
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.lang.IllegalStateException
 
 class MainActivity : BaseActivity<AppState>() {
 
-    @Inject
-    internal lateinit var viewModelFactory: ViewModelProvider.Factory
-
     private lateinit var binding: ActivityMainBinding
-
     /**Создаём модель*/
-    override val model: MainViewModel by lazy {
-        ViewModelProvider(this@MainActivity, viewModelFactory).get(MainViewModel::class.java)
-    }
+    override lateinit var model: MainViewModel
+
     /**Паттерн Observer в действии. Именно с его помощью мы подписываемся на изменения в LiveData*/
     private val observer = Observer<AppState> { renderData(it) }
-    private var adapter: MainAdapter? = null
-    private val onListItemClickListener: MainAdapter.OnListItemClickListener =
-        object : MainAdapter.OnListItemClickListener {
-            override fun onItemClick(data: DataModel) {
-                Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
-            }
-        }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        /**Сообщаем Dagger’у, что тут понадобятся зависимости*/
-        MyDictionaryApp.instance.component.inject(this)
-
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        model.subscribe().observe(this, observer)
-        binding.searchFab.setOnClickListener {
+    private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) }
+    private val fabClickListener: View.OnClickListener =
+        View.OnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
@@ -58,24 +38,49 @@ class MainActivity : BaseActivity<AppState>() {
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
+
+    private val onListItemClickListener: MainAdapter.OnListItemClickListener =
+        object : MainAdapter.OnListItemClickListener {
+            override fun onItemClick(data: DataModel) {
+                Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        /**Инициализация ViewModel*/
+        initViewModel()
+        /** инициализаця элементов экрана*/
+        initViews()
+    }
+
+    private fun initViewModel() {
+        /**Убедимся, что модель инициализируется раньше View*/
+        if (binding.mainActivityRecyclerview.adapter != null) {
+            throw IllegalStateException("The ViewModel should be initialised first")
+        }
+        val viewModel: MainViewModel by viewModel()
+        model = viewModel
+        model.subscribe().observe(this@MainActivity, observer)
+    }
+
+    private fun initViews() {
+        binding.searchFab.setOnClickListener(fabClickListener)
+        binding.mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
+        binding.mainActivityRecyclerview.adapter = adapter
     }
 
     override fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
                 val dataModel = appState.data
-                if (dataModel == null || dataModel.isEmpty()) {
+                if (dataModel.isNullOrEmpty()) {
                     showErrorScreen(getString(R.string.empty_server_response_on_success))
                 } else {
                     showViewSuccess()
-                    if (adapter == null) {
-                        binding.mainActivityRecyclerview.layoutManager =
-                            LinearLayoutManager(applicationContext)
-                        binding.mainActivityRecyclerview.adapter =
-                            MainAdapter(onListItemClickListener, dataModel)
-                    } else {
-                        adapter!!.setData(dataModel)
-                    }
+                    adapter.setData(dataModel)
                 }
             }
 
