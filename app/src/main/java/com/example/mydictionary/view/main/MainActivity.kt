@@ -14,11 +14,11 @@ import com.example.mydictionary.model.data.DataModel
 import com.example.mydictionary.view.base.BaseActivity
 import com.example.mydictionary.view.main.adapter.MainAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.lang.IllegalStateException
 
 class MainActivity : BaseActivity<AppState>() {
 
     private lateinit var binding: ActivityMainBinding
+
     /**Создаём модель*/
     override lateinit var model: MainViewModel
 
@@ -30,10 +30,8 @@ class MainActivity : BaseActivity<AppState>() {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
-                /**Обратите внимание на этот ключевой момент. У ViewModel мы получаем LiveData через
-                метод getData и подписываемся на изменения, передавая туда observer*/
                 override fun onClick(searchWord: String) {
-                    model.getData(searchWord, true).observe(this@MainActivity, observer)
+                    model.getData(searchWord, true)
                 }
             })
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
@@ -107,7 +105,7 @@ class MainActivity : BaseActivity<AppState>() {
         showViewError()
         binding.errorTextview.text = error ?: getString(R.string.undefined_error)
         binding.reloadButton.setOnClickListener {
-            model.getData("hi", true).observe(this, observer)
+            model.getData("hi", true)
         }
     }
 

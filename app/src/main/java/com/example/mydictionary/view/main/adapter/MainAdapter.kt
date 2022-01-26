@@ -1,12 +1,12 @@
 package com.example.mydictionary.view.main.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import android.view.View
-import com.example.mydictionary.model.data.DataModel
 import com.example.mydictionary.R
+import com.example.mydictionary.model.data.DataModel
 
 class MainAdapter(
     private var onListItemClickListener: OnListItemClickListener
