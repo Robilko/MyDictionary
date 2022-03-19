@@ -59,6 +59,9 @@ class MainActivity : BaseActivity<AppState>() {
         if (binding.mainActivityRecyclerview.adapter != null) {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
+        /** Теперь ViewModel инициализируется через функцию by viewModel()
+         * Это функция, предоставляемая Koin из коробки через зависимость
+         * import org.koin.androidx.viewmodel.ext.android.viewModel*/
         val viewModel: MainViewModel by viewModel()
         model = viewModel
         model.subscribe().observe(this@MainActivity, observer)

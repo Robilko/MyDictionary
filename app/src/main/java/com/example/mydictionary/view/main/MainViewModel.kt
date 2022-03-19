@@ -20,7 +20,7 @@ class MainViewModel(private val interactor: MainInteractor) : BaseViewModel<AppS
         _mutableLiveData.value = AppState.Loading(null)
         cancelJob()
         /**Запускаем корутину для асинхронного доступа к серверу с помощью launch*/
-        viewModelCorutineScope.launch { startInteractor(word, isOnline) }
+        viewModelCoroutineScope.launch { startInteractor(word, isOnline) }
     }
 
     /**Добавляем suspend withContext(Dispatchers.IO) указывает, что доступ в сеть должен осуществляться через диспетчер IO (который предназначен именно для таких операций), хотя это и не обязательно указывать явно, потому что Retrofit и так делает это благодаря CoroutineCallAdapterFactory(). Это же касается и Room*/
