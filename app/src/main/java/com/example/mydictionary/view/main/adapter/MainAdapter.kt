@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mydictionary.R
 import com.example.mydictionary.model.data.DataModel
+import com.example.mydictionary.utils.convertMeaningsToString
 
 class MainAdapter(
     private var onListItemClickListener: OnListItemClickListener
@@ -30,7 +31,7 @@ class MainAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerItemViewHolder, position: Int) {
-        holder.bind(data.get(position))
+        holder.bind(data[position])
     }
 
     inner class RecyclerItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -39,12 +40,13 @@ class MainAdapter(
             if (layoutPosition != RecyclerView.NO_POSITION) {
                 itemView.findViewById<TextView>(R.id.header_textview_recycler_item).text = data.text
                 itemView.findViewById<TextView>(R.id.description_textview_recycler_item).text =
-                    data.meanings?.get(0)?.translation?.translation
+                    convertMeaningsToString(data.meanings!!)
+                //Вешаем слушатель
                 itemView.setOnClickListener { openInNewWindow(data) }
             }
         }
     }
-
+    // Передаём событие в MainActivity
     private fun openInNewWindow(listItemData: DataModel) {
         onListItemClickListener.onItemClick(listItemData)
 
@@ -53,7 +55,7 @@ class MainAdapter(
     override fun getItemCount(): Int {
         return data.size
     }
-
+    // Определяем интерфейс обратного вызова
     interface OnListItemClickListener {
         fun onItemClick(data: DataModel)
     }
