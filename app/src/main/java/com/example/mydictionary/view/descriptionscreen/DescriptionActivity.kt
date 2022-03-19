@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import coil.ImageLoader
+import coil.request.LoadRequest
+import coil.transform.CircleCropTransformation
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -61,7 +64,9 @@ class DescriptionActivity : AppCompatActivity() {
                 //Picasso
             //usePicassoToLoadPhoto(binding.descriptionImageview, imageLink)
                 // Glide
-            useGlideToLoadPhoto(binding.descriptionImageview, imageLink)
+            //useGlideToLoadPhoto(binding.descriptionImageview, imageLink)
+                //Coil
+            useCoilToLoadPhoto(binding.descriptionImageview, imageLink)
         }
     }
 
@@ -126,6 +131,20 @@ class DescriptionActivity : AppCompatActivity() {
             }).apply(RequestOptions()
                 .placeholder(R.drawable.ic_no_photo_vector)
                 .centerCrop()).into(imageView)
+    }
+
+    private fun useCoilToLoadPhoto(imageView: ImageView, imageLink: String) {
+        val request = LoadRequest.Builder(this)
+            .data("https:$imageLink")
+            .target(
+                onStart = {},
+                onSuccess = {result -> imageView.setImageDrawable(result)},
+                onError = {imageView.setImageResource(R.drawable.ic_load_error_vector)}
+            )
+            //.transformations(CircleCropTransformation()) //метод обрезает изображение по кругу. Можно убрать
+            .build()
+
+        ImageLoader(this).execute(request)
     }
 
     companion object {
