@@ -18,10 +18,24 @@ private const val DIALOG_FRAGMENT_TAG = "74a54328-5d62-46bf-ab6b-cbf5d8c79522"
 abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity() {
 
     private lateinit var binding: LoadingLayoutBinding
-    protected var isNetworkAvailable: Boolean = false
-
     /**В каждой Активити будет своя ViewModel, которая наследуется от BaseViewModel*/
     abstract val model: BaseViewModel<T>
+    protected var isNetworkAvailable: Boolean = false
+
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        isNetworkAvailable = isOnline(applicationContext)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding = LoadingLayoutBinding.inflate(layoutInflater)
+
+        isNetworkAvailable = isOnline(applicationContext)
+        if (!isNetworkAvailable && isDialogNull()) {
+            showNoInternetConnectionDialog()
+        }
+    }
 
     /**Каждая Активити будет отображать какие-то данные в соответствующем состоянии*/
     protected fun renderData(appState: T) {
@@ -56,27 +70,10 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
             }
         }
     }
-    /** Объявим абстрактный метод и будем вызывать его в renderData, когда данные будут готовы для отображения */
-    abstract fun setDataToAdapter(data: List<DataModel>)
-
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        isNetworkAvailable = isOnline(applicationContext)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding = LoadingLayoutBinding.inflate(layoutInflater)
-
-        isNetworkAvailable = isOnline(applicationContext)
-        if (!isNetworkAvailable && isDialogNull()) {
-            showNoInternetConnectionDialog()
-        }
-    }
 
     protected fun showNoInternetConnectionDialog() {
         showAlertDialog(
-            getString(R.string.dialog_message_device_is_offline),
+            getString(R.string.dialog_title_device_is_offline),
             getString(R.string.dialog_message_device_is_offline)
         )
     }
@@ -97,4 +94,6 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
     private fun isDialogNull(): Boolean {
         return supportFragmentManager.findFragmentByTag(DIALOG_FRAGMENT_TAG) == null
     }
+    /** Объявим абстрактный метод и будем вызывать его в renderData, когда данные будут готовы для отображения */
+    abstract fun setDataToAdapter(data: List<DataModel>)
 }
