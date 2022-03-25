@@ -1,9 +1,10 @@
-package com.example.mydictionary.model.datasource
+package com.example.mydictionary.model.data.api
 
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
 
+/** Пользовательский перехватчик для перехвата основных ответов и отображения пользователю основных ошибок */
 class BaseInterceptor private constructor() : Interceptor {
 
     private var responseCode: Int = 0

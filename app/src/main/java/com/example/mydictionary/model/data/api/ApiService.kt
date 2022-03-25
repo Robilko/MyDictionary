@@ -1,4 +1,4 @@
-package com.example.mydictionary.model.datasource
+package com.example.mydictionary.model.data.api
 
 import com.example.mydictionary.model.data.DataModel
 import kotlinx.coroutines.Deferred

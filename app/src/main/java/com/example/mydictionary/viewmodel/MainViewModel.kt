@@ -1,9 +1,9 @@
-package com.example.mydictionary.view.main
+package com.example.mydictionary.viewmodel
 
 import androidx.lifecycle.LiveData
 import com.example.mydictionary.model.data.AppState
-import com.example.mydictionary.utils.parseSearchResults
-import com.example.mydictionary.viewmodel.BaseViewModel
+import com.example.mydictionary.utils.parseOnlineSearchResults
+import com.example.mydictionary.view.main.MainInteractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,7 +27,7 @@ class MainViewModel(private val interactor: MainInteractor) : BaseViewModel<AppS
     /**Добавляем suspend withContext(Dispatchers.IO) указывает, что доступ в сеть должен осуществляться через диспетчер IO (который предназначен именно для таких операций), хотя это и не обязательно указывать явно, потому что Retrofit и так делает это благодаря CoroutineCallAdapterFactory(). Это же касается и Room*/
     private suspend fun startInteractor(word: String, isOnline: Boolean) =
         withContext(Dispatchers.IO) {
-            _mutableLiveData.postValue(parseSearchResults(interactor.getData(word, isOnline)))
+            _mutableLiveData.postValue(parseOnlineSearchResults(interactor.getData(word, isOnline)))
         }
 
     override fun handleError(error: Throwable) {

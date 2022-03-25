@@ -3,25 +3,48 @@ package com.example.mydictionary.utils
 import com.example.mydictionary.model.data.AppState
 import com.example.mydictionary.model.data.DataModel
 import com.example.mydictionary.model.data.Meanings
+import com.example.mydictionary.room.HistoryEntity
 
-fun parseSearchResults(data: AppState): AppState {
-    val newSearchResults = arrayListOf<DataModel>()
-    when (data) {
-        is AppState.Success -> {
-            val searchResults = data.data
-            if (!searchResults.isNullOrEmpty()) {
-                for (searchResult in searchResults) {
-                    parseResult(searchResult, newSearchResults)
-                }
-            }
-        }
-        else -> {}
-    }
-
-    return AppState.Success(newSearchResults)
+/**  Все методы говорят сами за себя, универсальны и парсят данные в зависимости от источника данных
+ *  (интернет или БД), возвращая их в понятном для наших Activity форматах */
+fun parseOnlineSearchResults(appState: AppState): AppState {
+    return AppState.Success(mapResult(appState, true))
 }
 
-private fun parseResult(dataModel: DataModel, newDataModels: ArrayList<DataModel>) {
+fun parseLocalSearchResults(appState: AppState): AppState {
+    return AppState.Success(mapResult(appState, true))
+}
+
+private fun mapResult(appState: AppState, isOnline: Boolean): List<DataModel> {
+    val newSearchResults = arrayListOf<DataModel>()
+    when(appState) {
+        is AppState.Success -> {
+            getSuccessResultData(appState, isOnline, newSearchResults)
+        }
+    }
+    return newSearchResults
+}
+
+private fun getSuccessResultData(
+    appState: AppState.Success,
+    isOnline: Boolean,
+    newDataModels: ArrayList<DataModel>
+) {
+    val dataModels: List<DataModel> = appState.data as List<DataModel>
+    if (dataModels.isNotEmpty()) {
+        if (isOnline) {
+            for (searchResult in dataModels) {
+                parseOnlineResult(searchResult, newDataModels)
+            }
+        } else {
+            for (searchResult in dataModels) {
+                newDataModels.add(DataModel(searchResult.text, arrayListOf()))
+            }
+        }
+    }
+}
+
+private fun parseOnlineResult(dataModel: DataModel, newDataModels: ArrayList<DataModel>) {
     if (!dataModel.text.isNullOrBlank() && !dataModel.meanings.isNullOrEmpty()) {
         val newMeanings = arrayListOf<Meanings>()
         for (meaning in dataModel.meanings) {
@@ -45,4 +68,28 @@ fun convertMeaningsToString(meanings: List<Meanings>): String {
         }
     }
     return meaningsSeparatedByComma
+}
+/** Принимаем на вход список слов в виде таблицы из БД и переводим его в List<SearchResult> */
+fun mapHistoryEntityToSearchResult(list: List<HistoryEntity>): List<DataModel> {
+    val dataModel = ArrayList<DataModel>()
+    if (!list.isNullOrEmpty()) {
+        for (entity in list) {
+            dataModel.add(DataModel(entity.word, null))
+        }
+    }
+    return dataModel
+}
+/** Метод конвертирует полученный от сервера результат в данные, доступные для сохранения в БД */
+fun convertDataModelSuccessToEntity(appState: AppState): HistoryEntity? {
+    return when (appState) {
+        is AppState.Success -> {
+            val searchResult = appState.data
+            if (searchResult.isNullOrEmpty() || searchResult[0].text.isNullOrEmpty()) {
+                null
+            } else {
+                HistoryEntity(searchResult[0].text!!, null)
+            }
+        }
+        else -> null
+    }
 }
