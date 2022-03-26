@@ -12,7 +12,7 @@ fun parseOnlineSearchResults(appState: AppState): AppState {
 }
 
 fun parseLocalSearchResults(appState: AppState): AppState {
-    return AppState.Success(mapResult(appState, true))
+    return AppState.Success(mapResult(appState, false))
 }
 
 private fun mapResult(appState: AppState, isOnline: Boolean): List<DataModel> {
