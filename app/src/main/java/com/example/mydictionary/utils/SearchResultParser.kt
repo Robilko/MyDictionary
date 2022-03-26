@@ -21,6 +21,7 @@ private fun mapResult(appState: AppState, isOnline: Boolean): List<DataModel> {
         is AppState.Success -> {
             getSuccessResultData(appState, isOnline, newSearchResults)
         }
+        else -> {}
     }
     return newSearchResults
 }

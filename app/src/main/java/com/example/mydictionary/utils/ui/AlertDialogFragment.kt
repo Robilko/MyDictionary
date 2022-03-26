@@ -1,4 +1,4 @@
-package geekbrains.ru.translator.utils.ui
+package com.example.mydictionary.utils.ui
 
 import android.app.Dialog
 import android.os.Bundle

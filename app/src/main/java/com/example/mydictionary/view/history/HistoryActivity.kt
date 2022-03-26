@@ -1,7 +1,6 @@
 package com.example.mydictionary.view.history
 
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import com.example.mydictionary.databinding.ActivityHistoryBinding
 import com.example.mydictionary.model.data.AppState
 import com.example.mydictionary.model.data.DataModel
@@ -41,7 +40,7 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
         }
         val viewModel: HistoryViewModel by viewModel()
         model = viewModel
-        model.subscribe().observe(this@HistoryActivity, Observer<AppState> { renderData(it) })
+        model.subscribe().observe(this@HistoryActivity, { renderData(it) }) //Observer<AppState> { renderData(it) }
     }
 
     private fun initViews() {

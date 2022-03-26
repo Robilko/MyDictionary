@@ -11,7 +11,7 @@ import com.example.mydictionary.model.data.DataModel
 import com.example.mydictionary.viewmodel.Interactor
 import com.example.mydictionary.utils.network.isOnline
 import com.example.mydictionary.viewmodel.BaseViewModel
-import geekbrains.ru.translator.utils.ui.AlertDialogFragment
+import com.example.mydictionary.utils.ui.AlertDialogFragment
 
 private const val DIALOG_FRAGMENT_TAG = "74a54328-5d62-46bf-ab6b-cbf5d8c79522"
 
@@ -78,7 +78,7 @@ abstract class BaseActivity<T : AppState, I : Interactor<T>> : AppCompatActivity
         )
     }
 
-    protected fun showAlertDialog(title: String?, message: String?) {
+    private fun showAlertDialog(title: String?, message: String?) {
         AlertDialogFragment.newInstance(title, message)
             .show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
     }

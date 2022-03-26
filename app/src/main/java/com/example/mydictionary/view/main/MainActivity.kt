@@ -101,7 +101,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
          * import org.koin.androidx.viewmodel.ext.android.viewModel*/
         val viewModel: MainViewModel by viewModel()
         model = viewModel
-        model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
+        model.subscribe().observe(this@MainActivity, { renderData(it) }) //Observer<AppState> { renderData(it) }
     }
 
     private fun initViews() {

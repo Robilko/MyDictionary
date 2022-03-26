@@ -9,7 +9,6 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import coil.ImageLoader
 import coil.request.LoadRequest
-import coil.transform.CircleCropTransformation
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -21,7 +20,7 @@ import com.example.mydictionary.databinding.ActivityDescriptionBinding
 import com.example.mydictionary.utils.network.isOnline
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import geekbrains.ru.translator.utils.ui.AlertDialogFragment
+import com.example.mydictionary.utils.ui.AlertDialogFragment
 import java.lang.Exception
 
 class DescriptionActivity : AppCompatActivity() {
@@ -47,7 +46,7 @@ class DescriptionActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-    /**Кнопка на ActionBar'е для возврата на предыдущий экран*/
+    /**Кнопка на ActionBar для возврата на предыдущий экран*/
     private fun setActionbarHomeButtonAsUp() {
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

@@ -13,7 +13,6 @@ import com.example.mydictionary.view.history.HistoryInteractor
 import com.example.mydictionary.view.main.MainInteractor
 import com.example.mydictionary.viewmodel.HistoryViewModel
 import com.example.mydictionary.viewmodel.MainViewModel
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 /**Для удобства создадим две переменные: в одной находятся зависимости, используемые во всём приложении, во второй - зависимости конкретного экрана.
