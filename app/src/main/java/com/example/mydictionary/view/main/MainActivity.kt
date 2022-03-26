@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.lifecycle.Observer
 import com.example.mydictionary.*
 import com.example.mydictionary.databinding.ActivityMainBinding
 import com.example.mydictionary.model.data.AppState
@@ -26,28 +25,26 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     /**Создаём модель*/
     override lateinit var model: MainViewModel
-
-    private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) }
+    /** Передаем в адаптер ссылку на функцию высшего порядка ::onItemClick */
+    private val adapter: MainAdapter by lazy { MainAdapter(::onItemClick) }
     private val fabClickListener: View.OnClickListener =
         View.OnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(onSearchClickListener)
             searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
-    /**Слушатель получает от адаптера необходимые данные и запускает новый экран*/
-    private val onListItemClickListener: MainAdapter.OnListItemClickListener =
-        object : MainAdapter.OnListItemClickListener {
-            override fun onItemClick(data: DataModel) {
-                startActivity(
-                    DescriptionActivity.getIntent(
-                        this@MainActivity,
-                        data.text!!,
-                        convertMeaningsToString(data.meanings!!),
-                        data.meanings[0].imageUrl
-                    )
-                )
-            }
-        }
+
+    /**Функция высшего порядка. Передается в адаптер. Запускает новый экран*/
+    private fun onItemClick(data: DataModel) {
+        startActivity(
+            DescriptionActivity.getIntent(
+                this@MainActivity,
+                data.text!!,
+                convertMeaningsToString(data.meanings!!),
+                data.meanings[0].imageUrl
+            )
+        )
+    }
 
     private val onSearchClickListener: SearchDialogFragment.OnSearchClickListener =
         object : SearchDialogFragment.OnSearchClickListener {
@@ -101,7 +98,8 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
          * import org.koin.androidx.viewmodel.ext.android.viewModel*/
         val viewModel: MainViewModel by viewModel()
         model = viewModel
-        model.subscribe().observe(this@MainActivity, { renderData(it) }) //Observer<AppState> { renderData(it) }
+        model.subscribe()
+            .observe(this@MainActivity, { renderData(it) }) //Observer<AppState> { renderData(it) }
     }
 
     private fun initViews() {

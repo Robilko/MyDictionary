@@ -10,7 +10,7 @@ import com.example.mydictionary.model.data.DataModel
 import com.example.mydictionary.utils.convertMeaningsToString
 
 class MainAdapter(
-    private var onListItemClickListener: OnListItemClickListener
+    private var onListItemClick: (DataModel) -> Unit
 ) : RecyclerView.Adapter<MainAdapter.RecyclerItemViewHolder>() {
 
     private var data: List<DataModel> = arrayListOf()
@@ -48,17 +48,11 @@ class MainAdapter(
     }
     // Передаём событие в MainActivity
     private fun openInNewWindow(listItemData: DataModel) {
-        onListItemClickListener.onItemClick(listItemData)
-
+        onListItemClick(listItemData)
     }
 
     override fun getItemCount(): Int {
         return data.size
     }
-    // Определяем интерфейс обратного вызова
-    interface OnListItemClickListener {
-        fun onItemClick(data: DataModel)
-    }
-
 }
 
