@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import com.example.mydictionary.*
 import com.example.mydictionary.databinding.ActivityMainBinding
 import com.example.mydictionary.model.data.AppState
@@ -15,6 +16,10 @@ import com.example.mydictionary.view.base.BaseActivity
 import com.example.mydictionary.view.descriptionscreen.DescriptionActivity
 import com.example.mydictionary.view.history.HistoryActivity
 import com.example.mydictionary.viewmodel.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
@@ -23,15 +28,16 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     private lateinit var binding: ActivityMainBinding
 
+    var dataModel: DataModel? = null
+
     /**Создаём модель*/
     override lateinit var model: MainViewModel
+
     /** Передаем в адаптер ссылку на функцию высшего порядка ::onItemClick */
     private val adapter: MainAdapter by lazy { MainAdapter(::onItemClick) }
     private val fabClickListener: View.OnClickListener =
         View.OnClickListener {
-            val searchDialogFragment = SearchDialogFragment.newInstance()
-            searchDialogFragment.setOnSearchClickListener(onSearchClickListener)
-            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
+            showNewSearchDialogFragment(onSearchClickListener)
         }
 
     /**Функция высшего порядка. Передается в адаптер. Запускает новый экран*/
@@ -46,6 +52,12 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
         )
     }
 
+    private fun showNewSearchDialogFragment(onSearchClickListener: SearchDialogFragment.OnSearchClickListener) {
+        val searchDialogFragment = SearchDialogFragment.newInstance()
+        searchDialogFragment.setOnSearchClickListener(onSearchClickListener)
+        searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
+    }
+
     private val onSearchClickListener: SearchDialogFragment.OnSearchClickListener =
         object : SearchDialogFragment.OnSearchClickListener {
             override fun onClick(searchWord: String) {
@@ -55,6 +67,37 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                 } else {
                     showNoInternetConnectionDialog()
                 }
+            }
+        }
+
+    private val onHistorySearchClickListener: SearchDialogFragment.OnSearchClickListener =
+        object : SearchDialogFragment.OnSearchClickListener {
+            override fun onClick(searchWord: String) {
+                CoroutineScope(
+                    Dispatchers.Default
+                            + SupervisorJob()
+                ).launch {
+                    dataModel = model.getDataByWord(searchWord)
+                    dataModel?.let {
+                        startActivity(
+                            DescriptionActivity.getIntent(
+                                this@MainActivity,
+                                it.text!!,
+                                convertMeaningsToString(it.meanings!!),
+                                it.meanings[0].imageUrl
+                            )
+                        )
+                    }
+                }
+
+                if (dataModel == null) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "$searchWord no in history",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                dataModel = null
             }
         }
 
@@ -82,6 +125,10 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
         return when (item.itemId) {
             R.id.menu_history -> {
                 startActivity(Intent(this, HistoryActivity::class.java))
+                true
+            }
+            R.id.menu_search_in_history -> {
+                showNewSearchDialogFragment(onHistorySearchClickListener)
                 true
             }
             else -> super.onOptionsItemSelected(item)

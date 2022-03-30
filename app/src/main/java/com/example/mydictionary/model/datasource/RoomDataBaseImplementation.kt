@@ -4,6 +4,7 @@ import com.example.mydictionary.model.data.AppState
 import com.example.mydictionary.model.data.DataModel
 import com.example.mydictionary.room.HistoryDao
 import com.example.mydictionary.utils.convertDataModelSuccessToEntity
+import com.example.mydictionary.utils.convertHistoryEntityToDataModel
 import com.example.mydictionary.utils.mapHistoryEntityToSearchResult
 
 class RoomDataBaseImplementation(private val historyDao: HistoryDao) : DataSourceLocal<List<DataModel>> {
@@ -18,4 +19,12 @@ class RoomDataBaseImplementation(private val historyDao: HistoryDao) : DataSourc
         }
     }
 
+    override suspend fun getDataByWord(word: String): DataModel? {
+        val entity = historyDao.getDataByWord(word)
+        return if (entity != null) {
+            convertHistoryEntityToDataModel(entity)
+        } else {
+            return null
+        }
+    }
 }

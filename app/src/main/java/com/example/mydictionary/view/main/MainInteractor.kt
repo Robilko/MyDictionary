@@ -22,4 +22,8 @@ class MainInteractor(
         }
         return appState
     }
+
+    suspend  fun getDataByWord(word: String): DataModel? {
+        return repositoryLocal.getDataByWord(word)
+    }
 }

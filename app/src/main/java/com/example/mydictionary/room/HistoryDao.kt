@@ -13,7 +13,7 @@ interface HistoryDao {
     suspend fun all(): List<HistoryEntity>
     /** Получить конкретное слово */
     @Query("SELECT * FROM HistoryEntity WHERE word LIKE :word")
-    suspend fun getDataByWord(word: String): HistoryEntity
+    suspend fun getDataByWord(word: String): HistoryEntity?
     /** Сохранить новое слово
      * onConflict = OnConflictStrategy.IGNORE означает, что дубликаты не будут сохраняться
      */

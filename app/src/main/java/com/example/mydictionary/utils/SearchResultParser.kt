@@ -3,6 +3,7 @@ package com.example.mydictionary.utils
 import com.example.mydictionary.model.data.AppState
 import com.example.mydictionary.model.data.DataModel
 import com.example.mydictionary.model.data.Meanings
+import com.example.mydictionary.model.data.Translation
 import com.example.mydictionary.room.HistoryEntity
 
 /**  Все методы говорят сами за себя, универсальны и парсят данные в зависимости от источника данных
@@ -88,9 +89,15 @@ fun convertDataModelSuccessToEntity(appState: AppState): HistoryEntity? {
             if (searchResult.isNullOrEmpty() || searchResult[0].text.isNullOrEmpty()) {
                 null
             } else {
-                HistoryEntity(searchResult[0].text!!, null)
+                HistoryEntity(searchResult[0].text!!, convertMeaningsToString(searchResult[0].meanings!!))
             }
         }
         else -> null
     }
+}
+
+fun convertHistoryEntityToDataModel(entity: HistoryEntity): DataModel {
+    val meanings = arrayListOf<Meanings>()
+    meanings.add(Meanings(Translation(entity.word), null))
+    return DataModel(entity.word, meanings)
 }

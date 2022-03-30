@@ -17,4 +17,5 @@
     </string>
     <string name="dialog_tittle_sorry">Sorry</string>
     <string name="menu_title_history">History</string>
+    <string name="menu_title_history_search">History search</string>
 </resources>
