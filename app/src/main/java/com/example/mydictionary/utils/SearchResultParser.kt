@@ -89,7 +89,7 @@ fun convertDataModelSuccessToEntity(appState: AppState): HistoryEntity? {
             if (searchResult.isNullOrEmpty() || searchResult[0].text.isNullOrEmpty()) {
                 null
             } else {
-                HistoryEntity(searchResult[0].text!!, convertMeaningsToString(searchResult[0].meanings!!))
+                HistoryEntity(searchResult[0].text!!, convertMeaningsToString(searchResult[0].meanings!!), searchResult[0].meanings!![0].imageUrl)
             }
         }
         else -> null
@@ -98,6 +98,6 @@ fun convertDataModelSuccessToEntity(appState: AppState): HistoryEntity? {
 
 fun convertHistoryEntityToDataModel(entity: HistoryEntity): DataModel {
     val meanings = arrayListOf<Meanings>()
-    meanings.add(Meanings(Translation(entity.word), null))
+    meanings.add(Meanings(Translation(entity.word), entity.imageUrl))
     return DataModel(entity.word, meanings)
 }

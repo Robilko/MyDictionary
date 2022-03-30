@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import com.example.mydictionary.*
 import com.example.mydictionary.databinding.ActivityMainBinding
 import com.example.mydictionary.model.data.AppState
@@ -77,27 +76,17 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                     Dispatchers.Default
                             + SupervisorJob()
                 ).launch {
-                    dataModel = model.getDataByWord(searchWord)
-                    dataModel?.let {
+                    model.getDataByWord(searchWord)?.let { data ->
                         startActivity(
                             DescriptionActivity.getIntent(
                                 this@MainActivity,
-                                it.text!!,
-                                convertMeaningsToString(it.meanings!!),
-                                it.meanings[0].imageUrl
+                                data.text!!,
+                                convertMeaningsToString(data.meanings!!),
+                                data.meanings[0].imageUrl
                             )
                         )
-                    }
+                    } ?: model.handleError(Throwable("$searchWord ${getString(R.string.history_search_word_error)}"))
                 }
-
-                if (dataModel == null) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "$searchWord no in history",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                dataModel = null
             }
         }
 
