@@ -22,5 +22,7 @@ class HistoryEntity(
     @field:ColumnInfo(name = "description")
     var description: String?,
     @field:ColumnInfo(name = "imageUrl")
-    var imageUrl: String?
+    var imageUrl: String?,
+    @field:ColumnInfo(name = "transcription")
+    var transcription: String?
 )

@@ -55,6 +55,7 @@ class DescriptionActivity : AppCompatActivity() {
     private fun setData() {
         val bundle = intent.extras
         binding.descriptionHeader.text = bundle?.getString(WORD_EXTRA)
+        binding.descriptionTranscription.text = bundle?.getString(TRANSCRIPTION_EXTRA)
         binding.descriptionTextview.text = bundle?.getString(DESCRIPTION_EXTRA)
         val imageLink = bundle?.getString(URL_EXTRA)
         if (imageLink.isNullOrBlank()) {
@@ -149,12 +150,14 @@ class DescriptionActivity : AppCompatActivity() {
     companion object {
         private const val DIALOG_FRAGMENT_TAG = "8c7dff51-9769-4f6d-bbee-a3896085e76e"
         private const val WORD_EXTRA = "f76a288a-5dcc-43f1-ba89-7fe1d53f63b0"
+        private const val TRANSCRIPTION_EXTRA = "6e4b154d-5dcc-4953-9769-a3896085e76r"
         private const val DESCRIPTION_EXTRA = "0eeb92aa-520b-4fd1-bb4b-027fbf963d9a"
         private const val URL_EXTRA = "6e4b154d-e01f-4953-a404-639fb3bf7281"
 
-        fun getIntent(context: Context, word: String, description: String, url: String?): Intent =
+        fun getIntent(context: Context, word: String, transcription: String, description: String, url: String?): Intent =
             Intent(context, DescriptionActivity::class.java).apply {
                 putExtra(WORD_EXTRA, word)
+                putExtra(TRANSCRIPTION_EXTRA, transcription)
                 putExtra(DESCRIPTION_EXTRA, description)
                 putExtra(URL_EXTRA, url)
             }

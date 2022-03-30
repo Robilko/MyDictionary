@@ -9,7 +9,8 @@ import com.example.mydictionary.*
 import com.example.mydictionary.databinding.ActivityMainBinding
 import com.example.mydictionary.model.data.AppState
 import com.example.mydictionary.model.data.DataModel
-import com.example.mydictionary.utils.convertMeaningsToString
+import com.example.mydictionary.utils.convertMeaningsTranscriptionToString
+import com.example.mydictionary.utils.convertMeaningsTranslationToString
 import com.example.mydictionary.utils.network.isOnline
 import com.example.mydictionary.view.base.BaseActivity
 import com.example.mydictionary.view.descriptionscreen.DescriptionActivity
@@ -45,7 +46,8 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
             DescriptionActivity.getIntent(
                 this@MainActivity,
                 data.text!!,
-                convertMeaningsToString(data.meanings!!),
+                convertMeaningsTranscriptionToString(data.meanings!!),
+                convertMeaningsTranslationToString(data.meanings),
                 data.meanings[0].imageUrl
             )
         )
@@ -81,7 +83,8 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                             DescriptionActivity.getIntent(
                                 this@MainActivity,
                                 data.text!!,
-                                convertMeaningsToString(data.meanings!!),
+                                convertMeaningsTranscriptionToString(data.meanings!!),
+                                convertMeaningsTranslationToString(data.meanings),
                                 data.meanings[0].imageUrl
                             )
                         )

@@ -17,12 +17,12 @@ interface HistoryDao {
     /** Сохранить новое слово
      * onConflict = OnConflictStrategy.IGNORE означает, что дубликаты не будут сохраняться
      */
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: HistoryEntity)
     /** Вставить список слов
      * onConflict = OnConflictStrategy.IGNORE означает, что дубликаты не будут сохраняться
      */
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(entities: List<HistoryEntity>)
     /** Обновить слово */
     @Update

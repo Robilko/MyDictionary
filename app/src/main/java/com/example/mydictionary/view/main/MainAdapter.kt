@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mydictionary.R
 import com.example.mydictionary.model.data.DataModel
-import com.example.mydictionary.utils.convertMeaningsToString
+import com.example.mydictionary.utils.convertMeaningsTranslationToString
 
 class MainAdapter(
     private var onListItemClick: (DataModel) -> Unit
@@ -40,7 +40,7 @@ class MainAdapter(
             if (layoutPosition != RecyclerView.NO_POSITION) {
                 itemView.findViewById<TextView>(R.id.header_textview_recycler_item).text = data.text
                 itemView.findViewById<TextView>(R.id.description_textview_recycler_item).text =
-                    convertMeaningsToString(data.meanings!!)
+                    convertMeaningsTranslationToString(data.meanings!!)
                 //Вешаем слушатель
                 itemView.setOnClickListener { openInNewWindow(data) }
             }

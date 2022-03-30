@@ -18,7 +18,7 @@ fun parseLocalSearchResults(appState: AppState): AppState {
 
 private fun mapResult(appState: AppState, isOnline: Boolean): List<DataModel> {
     val newSearchResults = arrayListOf<DataModel>()
-    when(appState) {
+    when (appState) {
         is AppState.Success -> {
             getSuccessResultData(appState, isOnline, newSearchResults)
         }
@@ -51,7 +51,13 @@ private fun parseOnlineResult(dataModel: DataModel, newDataModels: ArrayList<Dat
         val newMeanings = arrayListOf<Meanings>()
         for (meaning in dataModel.meanings) {
             if (meaning.translation != null && !meaning.translation.translation.isNullOrBlank()) {
-                newMeanings.add(Meanings(meaning.translation, meaning.imageUrl))
+                newMeanings.add(
+                    Meanings(
+                        meaning.translation,
+                        meaning.imageUrl,
+                        meaning.transcription
+                    )
+                )
             }
         }
         if (newMeanings.isNotEmpty()) {
@@ -60,7 +66,7 @@ private fun parseOnlineResult(dataModel: DataModel, newDataModels: ArrayList<Dat
     }
 }
 
-fun convertMeaningsToString(meanings: List<Meanings>): String {
+fun convertMeaningsTranslationToString(meanings: List<Meanings>): String {
     var meaningsSeparatedByComma = String()
     for ((index, meaning) in meanings.withIndex()) {
         meaningsSeparatedByComma += if (index + 1 != meanings.size) {
@@ -71,6 +77,11 @@ fun convertMeaningsToString(meanings: List<Meanings>): String {
     }
     return meaningsSeparatedByComma
 }
+
+fun convertMeaningsTranscriptionToString(meanings: List<Meanings>): String {
+    return "[${meanings[0].transcription!!}]"
+}
+
 /** Принимаем на вход список слов в виде таблицы из БД и переводим его в List<SearchResult> */
 fun mapHistoryEntityToSearchResult(list: List<HistoryEntity>): List<DataModel> {
     val dataModel = ArrayList<DataModel>()
@@ -81,6 +92,7 @@ fun mapHistoryEntityToSearchResult(list: List<HistoryEntity>): List<DataModel> {
     }
     return dataModel
 }
+
 /** Метод конвертирует полученный от сервера результат в данные, доступные для сохранения в БД */
 fun convertDataModelSuccessToEntity(appState: AppState): HistoryEntity? {
     return when (appState) {
@@ -89,7 +101,12 @@ fun convertDataModelSuccessToEntity(appState: AppState): HistoryEntity? {
             if (searchResult.isNullOrEmpty() || searchResult[0].text.isNullOrEmpty()) {
                 null
             } else {
-                HistoryEntity(searchResult[0].text!!, convertMeaningsToString(searchResult[0].meanings!!), searchResult[0].meanings!![0].imageUrl)
+                HistoryEntity(
+                    searchResult[0].text!!,
+                    convertMeaningsTranslationToString(searchResult[0].meanings!!),
+                    searchResult[0].meanings!![0].imageUrl,
+                    searchResult[0].meanings!![0].transcription
+                )
             }
         }
         else -> null
@@ -98,6 +115,6 @@ fun convertDataModelSuccessToEntity(appState: AppState): HistoryEntity? {
 
 fun convertHistoryEntityToDataModel(entity: HistoryEntity): DataModel {
     val meanings = arrayListOf<Meanings>()
-    meanings.add(Meanings(Translation(entity.word), entity.imageUrl))
+    meanings.add(Meanings(Translation(entity.word), entity.imageUrl, entity.transcription))
     return DataModel(entity.word, meanings)
 }
