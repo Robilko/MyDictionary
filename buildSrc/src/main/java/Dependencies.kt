@@ -28,6 +28,7 @@ object Versions {
     const val material = "1.5.0"
     const val constraintlayout = "2.1.3"
     const val swiperefreshlayout = "1.1.0"
+    const val recycleView = "1.2.1"
 
     //Kotlin
     const val stdlib = "1.6.10"
@@ -65,6 +66,7 @@ object Design {
     const val material = "com.google.android.material:material:${Versions.material}"
     const val constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintlayout}"
     const val swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swiperefreshlayout}"
+    const val recycleView = "androidx.recyclerview:recyclerview:${Versions.recycleView}"
 }
 
 object Kotlin {

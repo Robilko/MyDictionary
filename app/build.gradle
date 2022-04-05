@@ -38,6 +38,12 @@ android {
 }
 
 dependencies {
+    implementation project(Modules.repository)
+    implementation project(Modules.model)
+    implementation project(Modules.historyScreen)
+    implementation project(Modules.utils)
+    implementation project(Modules.core)
+
     //Kotlin
     implementation Kotlin.core
     //AndroidX
@@ -50,6 +56,7 @@ dependencies {
     testImplementation TestImpl.junit
     androidTestImplementation TestImpl.ext_junit
     androidTestImplementation TestImpl.espressoCore
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     // Retrofit 2
     implementation Retrofit.retrofit
     implementation Retrofit.converterGson
