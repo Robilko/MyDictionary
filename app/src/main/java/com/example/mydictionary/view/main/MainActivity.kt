@@ -19,13 +19,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.getKoin
 
 private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
 
 class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private val currentScope = getKoin().getOrCreateScope<MainActivity>("MainActivity")
 
     /**Создаём модель*/
     override lateinit var model: MainViewModel
@@ -129,10 +131,8 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
         if (binding.mainActivityRecyclerview.adapter != null) {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
-        /** Теперь ViewModel инициализируется через функцию by viewModel()
-         * Это функция, предоставляемая Koin из коробки через зависимость
-         * import org.koin.androidx.viewmodel.ext.android.viewModel*/
-        val viewModel: MainViewModel by viewModel()
+
+        val viewModel: MainViewModel by currentScope.inject()
         model = viewModel
         model.subscribe()
             .observe(this@MainActivity, { renderData(it) }) //Observer<AppState> { renderData(it) }

@@ -5,12 +5,13 @@ import com.example.model.data.AppState
 import com.example.core.BaseActivity
 import com.example.historyscreen.databinding.ActivityHistoryBinding
 import com.example.model.data.DataModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.getKoin
 import java.lang.IllegalStateException
 
 class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
 
     private lateinit var binding: ActivityHistoryBinding
+    private val currentScope = getKoin().getOrCreateScope<HistoryActivity>("HistoryActivity")
     override lateinit var model: HistoryViewModel
     private val adapter: HistoryAdapter by lazy { HistoryAdapter() }
 
@@ -37,7 +38,7 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
         if (binding.historyActivityRecyclerview.adapter != null) {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
-        val viewModel: HistoryViewModel by viewModel()
+        val viewModel: HistoryViewModel by currentScope.inject()
         model = viewModel
         model.subscribe().observe(this@HistoryActivity, { renderData(it) }) //Observer<AppState> { renderData(it) }
     }
