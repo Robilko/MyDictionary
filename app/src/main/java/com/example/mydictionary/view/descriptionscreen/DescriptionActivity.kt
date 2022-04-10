@@ -17,7 +17,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.mydictionary.R
 import com.example.mydictionary.databinding.ActivityDescriptionBinding
-import com.example.utils.network.isOnline
+import com.example.utils.network.OnlineLiveData
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.example.utils.ui.AlertDialogFragment
@@ -71,14 +71,21 @@ class DescriptionActivity : AppCompatActivity() {
     }
 
     private fun startLoadingOrShowError() {
-        if (isOnline(applicationContext)) {
-            setData()
-        } else {
-            AlertDialogFragment.newInstance(
-                getString(R.string.dialog_title_device_is_offline),
-                getString(R.string.dialog_message_device_is_offline)
-            ).show(supportFragmentManager, DIALOG_FRAGMENT_TAG)
-            stopRefreshAnimationIfNeeded()
+        OnlineLiveData(this).observe(
+            this@DescriptionActivity,
+        ) {
+            if (it) {
+                setData()
+            } else {
+                AlertDialogFragment.newInstance(
+                    getString(R.string.dialog_title_device_is_offline),
+                    getString(R.string.dialog_message_device_is_offline)
+                ).show(
+                    supportFragmentManager,
+                    DIALOG_FRAGMENT_TAG
+                )
+                stopRefreshAnimationIfNeeded()
+            }
         }
     }
 

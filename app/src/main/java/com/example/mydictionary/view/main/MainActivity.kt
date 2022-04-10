@@ -11,7 +11,6 @@ import com.example.core.BaseActivity
 import com.example.mydictionary.*
 import com.example.mydictionary.databinding.ActivityMainBinding
 import com.example.model.data.DataModel
-import com.example.utils.network.isOnline
 import com.example.mydictionary.view.descriptionscreen.DescriptionActivity
 import com.example.historyscreen.HistoryActivity
 import com.example.mydictionary.utils.convertMeaningsTranscriptionToString
@@ -67,7 +66,6 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     private val onSearchClickListener: SearchDialogFragment.OnSearchClickListener =
         object : SearchDialogFragment.OnSearchClickListener {
             override fun onClick(searchWord: String) {
-                isNetworkAvailable = isOnline(applicationContext)
                 if (isNetworkAvailable) {
                     model.getData(searchWord, isNetworkAvailable)
                 } else {
