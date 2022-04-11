@@ -16,6 +16,7 @@ class ViewByIdDelegate<out T : View>(private val rootGetter: () -> View?, privat
      * */
     //Ссылка на root
     private var rootRef: WeakReference<View>? = null
+
     //Ссылка на View
     private var viewRef: T? = null
     //Метод вызывается при каждом обращении к переменной
@@ -49,9 +50,9 @@ class ViewByIdDelegate<out T : View>(private val rootGetter: () -> View?, privat
 
 fun <T : View> Activity.viewById(@IdRes viewId: Int): ViewByIdDelegate<T> {
     // Возвращаем корневую View
-    return ViewByIdDelegate({window.decorView.findViewById(android.R.id.content)}, viewId)
+    return ViewByIdDelegate({ window.decorView.findViewById(android.R.id.content) }, viewId)
 }
 
 fun <T : View> Fragment.viewById(@IdRes viewId: Int): ViewByIdDelegate<T> {
-    return ViewByIdDelegate({view}, viewId)
+    return ViewByIdDelegate({ view }, viewId)
 }

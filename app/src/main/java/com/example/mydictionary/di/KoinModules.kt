@@ -2,7 +2,7 @@ package com.example.mydictionary.di
 
 import androidx.room.Room
 import com.example.historyscreen.HistoryActivity
-import com.example.model.data.DataModel
+import com.example.model.data.dto.SearchResultDto
 import com.example.repository.datasource.RetrofitImplementation
 import com.example.repository.datasource.RoomDataBaseImplementation
 import com.example.repository.repositiry.Repository
@@ -28,10 +28,10 @@ val application = module {
     single { Room.databaseBuilder(get(), HistoryDataBase::class.java, "HistoryDB").build() }
     /** Получаем DAO */
     single { get<HistoryDataBase>().historyDao() }
-    single<Repository<List<DataModel>>> {
+    single<Repository<List<SearchResultDto>>> {
         RepositoryImplementation(RetrofitImplementation())
     }
-    single<RepositoryLocal<List<DataModel>>> {
+    single<RepositoryLocal<List<SearchResultDto>>> {
         RepositoryImplementationLocal(
             RoomDataBaseImplementation(
                 get()

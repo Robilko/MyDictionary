@@ -4,7 +4,7 @@ import android.os.Bundle
 import com.example.model.data.AppState
 import com.example.core.BaseActivity
 import com.example.historyscreen.databinding.ActivityHistoryBinding
-import com.example.model.data.DataModel
+import com.example.model.data.userdata.DataModel
 import org.koin.android.ext.android.getKoin
 import java.lang.IllegalStateException
 
@@ -23,6 +23,7 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
         initViewModel()
         initViews()
     }
+
     /** Сразу запрашиваем данные из локального репозитория */
     override fun onResume() {
         super.onResume()
@@ -40,7 +41,8 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
         }
         val viewModel: HistoryViewModel by currentScope.inject()
         model = viewModel
-        model.subscribe().observe(this@HistoryActivity, { renderData(it) }) //Observer<AppState> { renderData(it) }
+        model.subscribe()
+            .observe(this@HistoryActivity) { renderData(it) } //Observer<AppState> { renderData(it) }
     }
 
     private fun initViews() {

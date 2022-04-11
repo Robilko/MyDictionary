@@ -10,11 +10,12 @@ import com.example.model.data.AppState
 import com.example.core.BaseActivity
 import com.example.mydictionary.*
 import com.example.mydictionary.databinding.ActivityMainBinding
-import com.example.model.data.DataModel
 import com.example.mydictionary.view.descriptionscreen.DescriptionActivity
 import com.example.historyscreen.HistoryActivity
+import com.example.model.data.userdata.DataModel
 import com.example.mydictionary.utils.convertMeaningsTranscriptionToString
 import com.example.mydictionary.utils.convertMeaningsTranslationToString
+import com.example.mydictionary.utils.mapSearchResultToDataModel
 import com.example.utils.ui.viewById
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
@@ -28,6 +29,7 @@ private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "74a54328-5d62-46bf-ab6b-cb
 class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     private lateinit var binding: ActivityMainBinding
+
     //обращение к некоторым View через делегаты вместо findViewById или ViewBinding
     //применяем исключительно в учебных целях. Как по мне ViewBinding намного практичнее
     private val mainActivityRecyclerview by viewById<RecyclerView>(R.id.main_activity_recyclerview)
@@ -46,15 +48,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     /**Функция высшего порядка. Передается в адаптер. Запускает новый экран*/
     private fun onItemClick(data: DataModel) {
-        startActivity(
-            DescriptionActivity.getIntent(
-                this@MainActivity,
-                data.text!!,
-                convertMeaningsTranscriptionToString(data.meanings!!),
-                convertMeaningsTranslationToString(data.meanings!!),
-                data.meanings!![0].imageUrl
-            )
-        )
+        startDescriptionActivity(data)
     }
 
     private fun showNewSearchDialogFragment(onSearchClickListener: SearchDialogFragment.OnSearchClickListener) {
@@ -81,17 +75,10 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                     Dispatchers.Default
                             + SupervisorJob()
                 ).launch {
-                    model.getDataByWord(searchWord)?.let { data ->
-                        startActivity(
-                            DescriptionActivity.getIntent(
-                                this@MainActivity,
-                                data.text!!,
-                                convertMeaningsTranscriptionToString(data.meanings!!),
-                                convertMeaningsTranslationToString(data.meanings!!),
-                                data.meanings!![0].imageUrl
-                            )
-                        )
-                    } ?: model.handleError(Throwable("$searchWord ${getString(R.string.history_search_word_error)}"))
+                    model.getDataByWord(searchWord)?.let { searchResult ->
+                        startDescriptionActivity(mapSearchResultToDataModel(searchResult))
+                    }
+                        ?: model.handleError(Throwable("$searchWord ${getString(R.string.history_search_word_error)}"))
                 }
             }
         }
@@ -146,6 +133,18 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     private fun initViews() {
         searchFAB.setOnClickListener(fabClickListener)
         mainActivityRecyclerview.adapter = adapter
+    }
+
+    private fun startDescriptionActivity(data: DataModel) {
+        startActivity(
+            DescriptionActivity.getIntent(
+                this@MainActivity,
+                data.text,
+                convertMeaningsTranscriptionToString(data.meanings),
+                convertMeaningsTranslationToString(data.meanings),
+                data.meanings[0].imageUrl
+            )
+        )
     }
 
 }
